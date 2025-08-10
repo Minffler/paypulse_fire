@@ -1,6 +1,6 @@
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Separator } from "@/components/ui/separator";
-import { ResponsiveContainer, SparklineChart, Area, Tooltip } from "recharts";
+import { ResponsiveContainer, AreaChart, Area, Tooltip, YAxis, XAxis } from "recharts";
 import { Badge } from "@/components/ui/badge";
 
 type Employee = {
@@ -40,7 +40,7 @@ export function EmployeeDetailPanel({ employee, open, onOpenChange }: { employee
                 <h4 className="text-sm font-semibold mb-2">최근 12개월 급여 추이 (실지급액)</h4>
                 <div className="h-[100px]">
                 <ResponsiveContainer width="100%" height="100%">
-                    <SparklineChart data={sparklineData}>
+                    <AreaChart data={sparklineData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
                         <defs>
                             <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
                                 <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.4}/>
@@ -53,7 +53,9 @@ export function EmployeeDetailPanel({ employee, open, onOpenChange }: { employee
                             formatter={(value: number) => [`${(value * 10000).toLocaleString()}원`, "실지급액"]}
                         />
                         <Area type="monotone" dataKey="value" stroke="hsl(var(--primary))" fillOpacity={1} fill="url(#colorUv)" />
-                    </SparklineChart>
+                        <YAxis hide domain={['dataMin - 50', 'dataMax + 50']} />
+                        <XAxis dataKey="month" hide />
+                    </AreaChart>
                 </ResponsiveContainer>
                 </div>
             </div>
