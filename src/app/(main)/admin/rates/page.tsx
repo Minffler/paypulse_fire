@@ -1,15 +1,42 @@
+"use client";
+
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { SlidersHorizontal, PlusCircle } from "lucide-react";
 
-const rates = [
+const initialRates = [
   { year: 2024, nationalPension: "4.5%", healthInsurance: "3.545%", employmentInsurance: "0.9%", industrialAccident: "0.75%", updatedBy: "admin", updatedAt: "2024-01-15" },
   { year: 2023, nationalPension: "4.5%", healthInsurance: "3.495%", employmentInsurance: "0.9%", industrialAccident: "0.75%", updatedBy: "admin", updatedAt: "2023-01-12" },
 ];
 
 export default function RatesPage() {
+  const [rates, setRates] = useState(initialRates);
+
+  const handleAddYear = () => {
+    const latestYear = rates.reduce((max, rate) => Math.max(max, rate.year), 0);
+    const newYear = latestYear + 1;
+    const newRate = {
+      year: newYear,
+      nationalPension: "",
+      healthInsurance: "",
+      employmentInsurance: "",
+      industrialAccident: "",
+      updatedBy: "current_user", // Placeholder
+      updatedAt: new Date().toISOString().split('T')[0],
+    };
+    setRates([newRate, ...rates]);
+  };
+  
+  const handleInputChange = (year: number, field: string, value: string) => {
+    setRates(rates.map(rate => 
+      rate.year === year ? { ...rate, [field]: value } : rate
+    ));
+  };
+
+
   return (
     <div className="space-y-6">
         <div>
@@ -27,7 +54,7 @@ export default function RatesPage() {
                     급여 계산에 사용되는 4대보험 및 기타 요율을 관리합니다.
                 </CardDescription>
             </div>
-            <Button>
+            <Button onClick={handleAddYear}>
                 <PlusCircle className="mr-2 h-4 w-4" />
                 새 연도 추가
             </Button>
@@ -49,11 +76,18 @@ export default function RatesPage() {
             <TableBody>
               {rates.map((rate) => (
                 <TableRow key={rate.year}>
-                  <TableCell className="font-medium">{rate.year}</TableCell>
-                  <TableCell><Input defaultValue={rate.nationalPension} className="h-8" /></TableCell>
-                  <TableCell><Input defaultValue={rate.healthInsurance} className="h-8" /></TableCell>
-                  <TableCell><Input defaultValue={rate.employmentInsurance} className="h-8" /></TableCell>
-                  <TableCell><Input defaultValue={rate.industrialAccident} className="h-8" /></TableCell>
+                  <TableCell className="font-medium">
+                    <Input 
+                      type="number" 
+                      value={rate.year} 
+                      onChange={(e) => handleInputChange(rate.year, 'year', e.target.value)} 
+                      className="h-8 w-24"
+                    />
+                  </TableCell>
+                  <TableCell><Input value={rate.nationalPension} onChange={(e) => handleInputChange(rate.year, 'nationalPension', e.target.value)} className="h-8" /></TableCell>
+                  <TableCell><Input value={rate.healthInsurance} onChange={(e) => handleInputChange(rate.year, 'healthInsurance', e.target.value)} className="h-8" /></TableCell>
+                  <TableCell><Input value={rate.employmentInsurance} onChange={(e) => handleInputChange(rate.year, 'employmentInsurance', e.target.value)} className="h-8" /></TableCell>
+                  <TableCell><Input value={rate.industrialAccident} onChange={(e) => handleInputChange(rate.year, 'industrialAccident', e.target.value)} className="h-8" /></TableCell>
                   <TableCell>{rate.updatedBy}</TableCell>
                   <TableCell>{rate.updatedAt}</TableCell>
                   <TableCell className="text-right">
