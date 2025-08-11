@@ -66,11 +66,11 @@ export function MainNav({ className, linkClassName, ...props }: React.HTMLAttrib
   const pathname = usePathname();
   const allSubmenuLabels = navItems.filter(item => item.subItems).map(item => item.label);
   const [openItems, setOpenItems] = React.useState<string[]>([]);
+  const [isClient, setIsClient] = React.useState(false);
 
   React.useEffect(() => {
-    // This effect runs only on the client, after the initial render.
-    // This prevents a hydration mismatch by ensuring the server and client
-    // render the same initial HTML (with menus closed).
+    setIsClient(true);
+    // Open all menus by default on the client side after mount
     setOpenItems(allSubmenuLabels);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
