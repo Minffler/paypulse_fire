@@ -45,10 +45,10 @@ export function DepartmentDistributionChart() {
             />
             <Legend />
             <Bar yAxisId="left" dataKey="인원" fill="hsl(var(--primary))" name="인원 (명)" radius={[4, 4, 0, 0]}>
-                <LabelList dataKey="인원" position="top" offset={4} className="fill-foreground" fontSize={12} />
+                <LabelList dataKey="인원" position="top" offset={4} fill="hsl(var(--primary))" fontSize={12} />
             </Bar>
             <Bar yAxisId="right" dataKey="평균급여" fill="hsl(var(--accent))" name="평균급여 (만원)" radius={[4, 4, 0, 0]}>
-                 <LabelList dataKey="평균급여" position="top" offset={4} className="fill-foreground" fontSize={12} />
+                 <LabelList dataKey="평균급여" position="top" offset={4} fill="hsl(var(--accent))" fontSize={12} />
             </Bar>
           </BarChart>
         </ChartContainer>
