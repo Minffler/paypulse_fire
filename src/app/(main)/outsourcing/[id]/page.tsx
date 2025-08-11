@@ -74,11 +74,11 @@ export default function OutsourcingDetailPage({ params }: { params: { id: string
             </div>
              <div className="space-y-1">
                 <p className="text-muted-foreground">상태</p>
-                <p className="font-medium">
+                <div className="font-medium">
                     <Badge variant={contract.status === 'active' ? 'default' : 'secondary'}>
                         {contract.status === 'active' ? '진행중' : '종료'}
                     </Badge>
-                </p>
+                </div>
             </div>
         </CardContent>
       </Card>
