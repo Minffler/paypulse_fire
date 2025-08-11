@@ -68,6 +68,8 @@ export function MainNav({ className, linkClassName, ...props }: React.HTMLAttrib
   const [openItems, setOpenItems] = React.useState<string[]>([]);
   
   React.useEffect(() => {
+    // This code runs only on the client, after hydration.
+    // This ensures the server and client render the same initial HTML.
     setOpenItems(allSubmenuLabels);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
