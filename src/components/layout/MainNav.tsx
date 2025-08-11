@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
+import * as React from "react";
 import {
   LayoutDashboard,
   Wallet,
@@ -63,12 +64,19 @@ const navItems = [
 
 export function MainNav({ className, linkClassName, ...props }: React.HTMLAttributes<HTMLElement> & { linkClassName?: string }) {
   const pathname = usePathname();
+  const allSubmenuLabels = navItems.filter(item => item.subItems).map(item => item.label);
+  const [openItems, setOpenItems] = React.useState<string[]>([]);
   
+  React.useEffect(() => {
+    setOpenItems(allSubmenuLabels);
+  }, []);
+
+
   const isParentActive = (subItems: any[]) => subItems.some(item => pathname.startsWith(item.href));
 
   return (
     <nav className={cn("flex flex-col space-y-2", className)} {...props}>
-      <Accordion type="multiple" defaultValue={navItems.filter(item => item.subItems).map(item => item.label)}>
+      <Accordion type="multiple" value={openItems} onValueChange={setOpenItems}>
         {navItems.map((item) =>
           item.subItems ? (
             <AccordionItem value={item.label} key={item.label} className="border-b-0">
