@@ -69,6 +69,7 @@ export function MainNav({ className, linkClassName, ...props }: React.HTMLAttrib
   
   React.useEffect(() => {
     setOpenItems(allSubmenuLabels);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
 
