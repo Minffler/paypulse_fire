@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Filter, Star, ChevronDown, ArrowUpDown } from "lucide-react";
 import { EmployeeDetailPanel } from "./EmployeeDetailPanel";
+import { cn } from "@/lib/utils";
 
 type Employee = {
     id: string;
@@ -31,6 +32,7 @@ export function PayrollTable() {
     const [isPanelOpen, setIsPanelOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
     const [departmentFilter, setDepartmentFilter] = useState<string[]>([]);
+    const [markedEmployees, setMarkedEmployees] = useState<string[]>([]);
     
     const departments = useMemo(() => Array.from(new Set(allPayrollData.map(e => e.department))), []);
 
@@ -52,6 +54,12 @@ export function PayrollTable() {
     const handleDepartmentFilterChange = (department: string) => {
         setDepartmentFilter(prev =>
             prev.includes(department) ? prev.filter(d => d !== department) : [...prev, department]
+        );
+    };
+
+    const toggleMarkEmployee = (employeeId: string) => {
+        setMarkedEmployees(prev =>
+            prev.includes(employeeId) ? prev.filter(id => id !== employeeId) : [...prev, employeeId]
         );
     };
 
@@ -97,26 +105,29 @@ export function PayrollTable() {
                             <TableHead>입사일</TableHead>
                             <TableHead className="text-right"><Button variant="ghost" size="sm"><ArrowUpDown className="mr-2 h-4 w-4" />기본급</Button></TableHead>
                             <TableHead className="text-right"><Button variant="ghost" size="sm"><ArrowUpDown className="mr-2 h-4 w-4" />실지급액</Button></TableHead>
-                            <TableHead className="text-center">액션</TableHead>
+                            <TableHead className="text-center">마커</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {payrollData.map((emp) => (
-                            <TableRow key={emp.id} onClick={() => handleRowClick(emp)} className="cursor-pointer">
-                                <TableCell className="font-medium">{emp.id}</TableCell>
-                                <TableCell>{emp.name}</TableCell>
-                                <TableCell>{emp.department}</TableCell>
-                                <TableCell>{emp.position}</TableCell>
-                                <TableCell>{emp.hireDate}</TableCell>
-                                <TableCell className="text-right">₩{emp.baseSalary.toLocaleString()}</TableCell>
-                                <TableCell className="text-right font-semibold">₩{emp.netPay.toLocaleString()}</TableCell>
-                                <TableCell className="text-center">
-                                    <Button variant="ghost" size="icon" onClick={(e) => e.stopPropagation()}>
-                                        <Star className="h-4 w-4 text-muted-foreground hover:text-yellow-400 hover:fill-yellow-400" />
-                                    </Button>
-                                </TableCell>
-                            </TableRow>
-                        ))}
+                        {payrollData.map((emp) => {
+                            const isMarked = markedEmployees.includes(emp.id);
+                            return (
+                                <TableRow key={emp.id} onClick={() => handleRowClick(emp)} className="cursor-pointer">
+                                    <TableCell className="font-medium">{emp.id}</TableCell>
+                                    <TableCell>{emp.name}</TableCell>
+                                    <TableCell>{emp.department}</TableCell>
+                                    <TableCell>{emp.position}</TableCell>
+                                    <TableCell>{emp.hireDate}</TableCell>
+                                    <TableCell className="text-right">₩{emp.baseSalary.toLocaleString()}</TableCell>
+                                    <TableCell className="text-right font-semibold">₩{emp.netPay.toLocaleString()}</TableCell>
+                                    <TableCell className="text-center">
+                                        <Button variant="ghost" size="icon" onClick={(e) => { e.stopPropagation(); toggleMarkEmployee(emp.id); }}>
+                                            <Star className={cn("h-4 w-4 text-muted-foreground transition-colors", isMarked ? "text-yellow-400 fill-yellow-400" : "hover:text-yellow-400")} />
+                                        </Button>
+                                    </TableCell>
+                                </TableRow>
+                            )
+                        })}
                     </TableBody>
                 </Table>
             </div>
