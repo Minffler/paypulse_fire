@@ -68,13 +68,13 @@ export function MainNav({ className, linkClassName, ...props }: React.HTMLAttrib
 
   return (
     <nav className={cn("flex flex-col space-y-2", className)} {...props}>
-      <Accordion type="multiple" defaultValue={navItems.filter(item => item.subItems && isParentActive(item.subItems)).map(item => item.label)}>
+      <Accordion type="multiple" defaultValue={navItems.filter(item => item.subItems).map(item => item.label)}>
         {navItems.map((item) =>
           item.subItems ? (
             <AccordionItem value={item.label} key={item.label} className="border-b-0">
               <AccordionTrigger className={cn(
                 "flex items-center justify-start gap-3 rounded-md px-3 py-2 text-sm font-medium hover:bg-muted hover:no-underline",
-                isParentActive(item.subItems) ? "bg-muted text-primary" : "text-muted-foreground",
+                isParentActive(item.subItems) ? "text-primary" : "text-muted-foreground",
               )}>
                  <item.icon className="h-5 w-5" />
                  {item.label}
