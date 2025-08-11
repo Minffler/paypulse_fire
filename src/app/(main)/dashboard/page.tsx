@@ -1,3 +1,4 @@
+
 import { DepartmentDistributionChart } from "@/components/dashboard/DepartmentDistributionChart";
 import { KpiCard } from "@/components/dashboard/KpiCard";
 import { MonthlyCostChart } from "@/components/dashboard/MonthlyCostChart";
@@ -22,28 +23,31 @@ export default function DashboardPage() {
           value="152 명"
           icon={<Users className="h-4 w-4 text-muted-foreground" />}
           trend={1.5}
-          href="/payroll/list"
+          previousValue="150 명"
         />
         <KpiCard
           title="총 인건비 (월)"
           value="₩ 875,230,000"
           icon={<DollarSign className="h-4 w-4 text-muted-foreground" />}
           trend={2.1}
-           href="/payroll/list"
+          previousValue="₩ 857,130,000"
         />
         <KpiCard
           title="외주 월비용"
           value="₩ 56,800,000"
           icon={<Wallet className="h-4 w-4 text-muted-foreground" />}
           trend={-0.5}
-           href="/outsourcing/list"
+          previousValue="₩ 57,100,000"
         />
         <KpiCard
           title="업로드 오류"
           value="3 건"
           icon={<AlertCircle className="h-4 w-4 text-muted-foreground" />}
           trend={-10.0}
-          href="/payroll/upload"
+          previousValue="3 건"
+          currentPeriodLabel="이번 주"
+          previousPeriodLabel="지난 주"
+          trendLabel="지난주 대비"
         />
       </div>
 
