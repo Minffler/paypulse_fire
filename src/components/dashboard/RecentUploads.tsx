@@ -1,11 +1,15 @@
+"use client";
+
+import { useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { CheckCircle, AlertTriangle, XCircle } from "lucide-react";
-import Link from "next/link";
+import { UploadDetailDialog } from "./UploadDetailDialog";
+import type { PayrollUpload } from "./UploadDetailDialog";
 
-const uploads = [
+const uploads: PayrollUpload[] = [
   { id: "up1", file: "2024년 7월 급여대장.xlsx", status: "completed", rows: 152, user: "급여담당자A", time: "5분 전" },
   { id: "up2", file: "2024년 6월 보너스.csv", status: "completed", rows: 50, user: "급여담당자B", time: "2시간 전" },
   { id: "up3", file: "2024년 6월 급여대장_v2.xlsx", status: "failed", rows: 148, user: "급여담당자A", time: "1일 전" },
@@ -20,39 +24,52 @@ const statusConfig = {
 };
 
 export function RecentUploads() {
+  const [selectedUpload, setSelectedUpload] = useState<PayrollUpload | null>(null);
+
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>최근 업로드</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-1">
-        {uploads.map((upload) => {
-            const statusInfo = statusConfig[upload.status as keyof typeof statusConfig] || statusConfig.warning;
-            return (
-                <Link href="/payroll/upload" key={upload.id} className="block rounded-md transition-colors hover:bg-muted/50">
-                    <div className="flex items-center space-x-4 p-3">
-                        <div className="relative">
-                            <Avatar className="h-9 w-9">
-                                <AvatarImage src={`https://i.pravatar.cc/150?u=${upload.user}`} />
-                                <AvatarFallback>{upload.user.charAt(0)}</AvatarFallback>
-                            </Avatar>
-                            <span className={cn("absolute -bottom-1 -right-1 block rounded-full p-0.5", statusInfo.color)}>
-                               <statusInfo.icon className="h-3 w-3 text-white" />
-                            </span>
-                        </div>
-                        <div className="flex-1 space-y-1">
-                            <p className="text-sm font-medium leading-none truncate">{upload.file}</p>
-                            <p className="text-sm text-muted-foreground">{upload.user} · {upload.time}</p>
-                        </div>
-                        <div className="text-right">
-                            <Badge variant={upload.status === 'failed' ? 'destructive' : 'secondary'}>{statusInfo.label}</Badge>
-                            <p className="text-sm text-muted-foreground">{upload.rows} 행</p>
-                        </div>
-                    </div>
-                </Link>
-            )
-        })}
-      </CardContent>
-    </Card>
+    <>
+      <Card>
+        <CardHeader>
+          <CardTitle>최근 업로드</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-1">
+          {uploads.map((upload) => {
+              const statusInfo = statusConfig[upload.status as keyof typeof statusConfig] || statusConfig.warning;
+              return (
+                  <div key={upload.id} className="block rounded-md transition-colors hover:bg-muted/50 cursor-pointer" onClick={() => setSelectedUpload(upload)}>
+                      <div className="flex items-center space-x-4 p-3">
+                          <div className="relative">
+                              <Avatar className="h-9 w-9">
+                                  <AvatarImage src={`https://i.pravatar.cc/150?u=${upload.user}`} />
+                                  <AvatarFallback>{upload.user.charAt(0)}</AvatarFallback>
+                              </Avatar>
+                              <span className={cn("absolute -bottom-1 -right-1 block rounded-full p-0.5", statusInfo.color)}>
+                                <statusInfo.icon className="h-3 w-3 text-white" />
+                              </span>
+                          </div>
+                          <div className="flex-1 space-y-1">
+                              <p className="text-sm font-medium leading-none truncate">{upload.file}</p>
+                              <p className="text-sm text-muted-foreground">{upload.user} · {upload.time}</p>
+                          </div>
+                          <div className="text-right">
+                              <Badge variant={upload.status === 'failed' ? 'destructive' : 'secondary'}>{statusInfo.label}</Badge>
+                              <p className="text-sm text-muted-foreground">{upload.rows} 행</p>
+                          </div>
+                      </div>
+                  </div>
+              )
+          })}
+        </CardContent>
+      </Card>
+      <UploadDetailDialog 
+        upload={selectedUpload} 
+        open={!!selectedUpload} 
+        onOpenChange={(isOpen) => {
+          if (!isOpen) {
+            setSelectedUpload(null);
+          }
+        }} 
+      />
+    </>
   );
 }
