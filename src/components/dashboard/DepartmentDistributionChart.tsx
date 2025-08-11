@@ -1,6 +1,7 @@
+
 "use client"
 
-import { Bar, BarChart, CartesianGrid, XAxis, YAxis, Tooltip, Legend } from "recharts"
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis, Tooltip, Legend, LabelList } from "recharts"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { ChartContainer, ChartTooltipContent, type ChartConfig } from "@/components/ui/chart"
 
@@ -33,7 +34,7 @@ export function DepartmentDistributionChart() {
       </CardHeader>
       <CardContent>
         <ChartContainer config={chartConfig} className="h-[300px] w-full">
-          <BarChart data={data}>
+          <BarChart data={data} margin={{ top: 20 }}>
             <CartesianGrid strokeDasharray="3 3" vertical={false} />
             <XAxis dataKey="name" tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} />
             <YAxis yAxisId="left" orientation="left" stroke="hsl(var(--primary))" tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} />
@@ -43,8 +44,12 @@ export function DepartmentDistributionChart() {
               content={<ChartTooltipContent />}
             />
             <Legend />
-            <Bar yAxisId="left" dataKey="인원" fill="hsl(var(--primary))" name="인원 (명)" radius={[4, 4, 0, 0]} />
-            <Bar yAxisId="right" dataKey="평균급여" fill="hsl(var(--accent))" name="평균급여 (만원)" radius={[4, 4, 0, 0]} />
+            <Bar yAxisId="left" dataKey="인원" fill="hsl(var(--primary))" name="인원 (명)" radius={[4, 4, 0, 0]}>
+                <LabelList dataKey="인원" position="top" offset={4} className="fill-foreground" fontSize={12} />
+            </Bar>
+            <Bar yAxisId="right" dataKey="평균급여" fill="hsl(var(--accent))" name="평균급여 (만원)" radius={[4, 4, 0, 0]}>
+                 <LabelList dataKey="평균급여" position="top" offset={4} className="fill-foreground" fontSize={12} />
+            </Bar>
           </BarChart>
         </ChartContainer>
       </CardContent>
