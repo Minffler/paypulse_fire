@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { ArrowDownRight, ArrowUpRight } from "lucide-react";
+import Link from "next/link";
 
 type KpiCardProps = {
   title: string;
@@ -8,13 +9,14 @@ type KpiCardProps = {
   icon: React.ReactNode;
   trend: number;
   trendLabel?: string;
+  href?: string;
 };
 
-export function KpiCard({ title, value, icon, trend, trendLabel = "지난달 대비" }: KpiCardProps) {
+export function KpiCard({ title, value, icon, trend, trendLabel = "지난달 대비", href }: KpiCardProps) {
   const isPositive = trend >= 0;
 
-  return (
-    <Card>
+  const CardContentComponent = (
+     <Card className="transition-all hover:shadow-md">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
         <CardTitle className="text-sm font-medium">{title}</CardTitle>
         {icon}
@@ -33,4 +35,14 @@ export function KpiCard({ title, value, icon, trend, trendLabel = "지난달 대
       </CardContent>
     </Card>
   );
+
+  if (href) {
+    return (
+      <Link href={href}>
+        {CardContentComponent}
+      </Link>
+    );
+  }
+
+  return CardContentComponent;
 }

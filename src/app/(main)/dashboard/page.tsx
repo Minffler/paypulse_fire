@@ -22,24 +22,28 @@ export default function DashboardPage() {
           value="152 명"
           icon={<Users className="h-4 w-4 text-muted-foreground" />}
           trend={1.5}
+          href="/payroll/list"
         />
         <KpiCard
           title="총 인건비 (월)"
           value="₩ 875,230,000"
           icon={<DollarSign className="h-4 w-4 text-muted-foreground" />}
           trend={2.1}
+           href="/payroll/list"
         />
         <KpiCard
           title="외주 월비용"
           value="₩ 56,800,000"
           icon={<Wallet className="h-4 w-4 text-muted-foreground" />}
           trend={-0.5}
+           href="/outsourcing/list"
         />
         <KpiCard
           title="업로드 오류"
           value="3 건"
           icon={<AlertCircle className="h-4 w-4 text-muted-foreground" />}
           trend={-10.0}
+          href="/payroll/upload"
         />
       </div>
 
