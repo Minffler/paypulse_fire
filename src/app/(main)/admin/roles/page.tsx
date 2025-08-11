@@ -1,3 +1,6 @@
+"use client";
+
+import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -6,7 +9,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Search, UserCog } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-const users = [
+const allUsers = [
   { id: 1, name: "김민준", email: "mj.kim@paywise.ai", roles: ["payroll", "admin"], avatar: "https://i.pravatar.cc/150?u=a042581f4e29026704d" },
   { id: 2, name: "이서연", email: "sy.lee@paywise.ai", roles: ["executive"], avatar: "https://i.pravatar.cc/150?u=a042581f4e29026704e" },
   { id: 3, name: "박도윤", email: "dy.park@paywise.ai", roles: ["auditor"], avatar: "https://i.pravatar.cc/150?u=a042581f4e29026704f" },
@@ -16,6 +19,15 @@ const users = [
 const allRoles = ["payroll", "executive", "auditor", "admin"];
 
 export default function RolesPage() {
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const filteredUsers = useMemo(() => {
+    return allUsers.filter(user =>
+      user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }, [searchTerm]);
+
   return (
     <div className="space-y-6">
       <div>
@@ -29,16 +41,20 @@ export default function RolesPage() {
         <CardHeader>
           <CardTitle>사용자 역할 관리</CardTitle>
           <CardDescription>
-            이메일로 사용자를 검색하고 역할을 부여하세요.
+            이메일 또는 이름으로 사용자를 검색하고 역할을 부여하세요.
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex items-center gap-4 mb-4">
             <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input placeholder="사용자 이메일 검색..." className="pl-10" />
+                <Input 
+                    placeholder="사용자 이메일 또는 이름 검색..." 
+                    className="pl-10" 
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                />
             </div>
-            <Button>검색</Button>
           </div>
           <div className="border rounded-md">
             <Table>
@@ -50,7 +66,7 @@ export default function RolesPage() {
                 </TableRow>
                 </TableHeader>
                 <TableBody>
-                {users.map((user) => (
+                {filteredUsers.map((user) => (
                     <TableRow key={user.id}>
                     <TableCell className="font-medium">
                         <div className="flex items-center gap-3">

@@ -1,18 +1,42 @@
+"use client";
+
+import { useState, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuCheckboxItem } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Users, Filter, PlusCircle, MoreHorizontal } from "lucide-react";
+import { Users, Filter, PlusCircle, MoreHorizontal, ChevronDown } from "lucide-react";
 import Link from "next/link";
 
-const contracts = [
+const allContracts = [
   { id: 'c1', companyName: "스마트 컨설팅", category: "IT 개발", task: "ERP 고도화", grade: "고급", headcount: 3, monthlyCost: 21000000, period: "2024.01-2024.12" },
   { id: 'c2', companyName: "디자인팩토리", category: "디자인", task: "UX/UI 개선", grade: "중급", headcount: 2, monthlyCost: 12000000, period: "2024.03-2024.08" },
   { id: 'c3', companyName: "마케팅 브로스", category: "마케팅", task: "퍼포먼스 마케팅", grade: "초급", headcount: 1, monthlyCost: 4500000, period: "2024.06-2024.12" },
+  { id: 'c4', companyName: "데이터 분석가 길동", category: "데이터", task: "BI 대시보드 구축", grade: "고급", headcount: 1, monthlyCost: 9000000, period: "2024.02-2024.07" },
+  { id: 'c5', companyName: "리걸 어드바이저", category: "법률", task: "계약서 검토", grade: "특급", headcount: 1, monthlyCost: 15000000, period: "2024.01-2024.06" },
 ];
 
 export default function OutsourcingListPage() {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [gradeFilter, setGradeFilter] = useState<string[]>([]);
+
+  const grades = useMemo(() => Array.from(new Set(allContracts.map(c => c.grade))), []);
+
+  const filteredContracts = useMemo(() => {
+    return allContracts.filter(contract => {
+      const companyMatch = contract.companyName.toLowerCase().includes(searchTerm.toLowerCase());
+      const gradeMatch = gradeFilter.length === 0 || gradeFilter.includes(contract.grade);
+      return companyMatch && gradeMatch;
+    });
+  }, [searchTerm, gradeFilter]);
+  
+  const handleGradeFilterChange = (grade: string) => {
+    setGradeFilter(prev => 
+      prev.includes(grade) ? prev.filter(g => g !== grade) : [...prev, grade]
+    );
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -34,19 +58,30 @@ export default function OutsourcingListPage() {
           <CardTitle>계약 목록</CardTitle>
           <CardDescription>
             <div className="flex flex-col md:flex-row gap-4 mt-2">
-                <Input placeholder="업체명 검색..." className="max-w-xs" />
+                <Input 
+                    placeholder="업체명 검색..." 
+                    className="max-w-xs"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                />
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button variant="outline" className="flex items-center gap-2">
                             <Filter className="h-4 w-4" />
-                            필터
+                            등급 필터
+                            <ChevronDown className="h-4 w-4" />
                         </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent>
-                        <DropdownMenuItem>등급: 고급</DropdownMenuItem>
-                        <DropdownMenuItem>등급: 중급</DropdownMenuItem>
-                        <DropdownMenuItem>계약기간: 진행중</DropdownMenuItem>
-                        <DropdownMenuItem>계약기간: 만료</DropdownMenuItem>
+                    <DropdownMenuContent align="start">
+                        {grades.map(grade => (
+                           <DropdownMenuCheckboxItem
+                                key={grade}
+                                checked={gradeFilter.includes(grade)}
+                                onCheckedChange={() => handleGradeFilterChange(grade)}
+                            >
+                                {grade}
+                            </DropdownMenuCheckboxItem>
+                        ))}
                     </DropdownMenuContent>
                 </DropdownMenu>
             </div>
@@ -67,7 +102,7 @@ export default function OutsourcingListPage() {
                 </TableRow>
                 </TableHeader>
                 <TableBody>
-                {contracts.map((contract) => (
+                {filteredContracts.map((contract) => (
                     <TableRow key={contract.id}>
                     <TableCell className="font-medium">{contract.companyName}</TableCell>
                     <TableCell>{contract.task}</TableCell>

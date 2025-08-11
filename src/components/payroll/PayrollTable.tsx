@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,44 +17,74 @@ type Employee = {
     netPay: number;
 };
 
-const payrollData: Employee[] = [
+const allPayrollData: Employee[] = [
   { id: 'EMP001', name: '홍길동', department: '엔지니어링', position: '시니어 개발자', hireDate: '2020-03-15', baseSalary: 5000000, netPay: 4200000 },
   { id: 'EMP002', name: '김영희', department: '디자인', position: '프로덕트 디자이너', hireDate: '2021-08-01', baseSalary: 4200000, netPay: 3500000 },
   { id: 'EMP003', name: '이철수', department: '마케팅', position: '퍼포먼스 마케터', hireDate: '2022-01-20', baseSalary: 3800000, netPay: 3200000 },
   { id: 'EMP004', name: '박하나', department: '엔지니어링', position: '주니어 개발자', hireDate: '2023-05-10', baseSalary: 3500000, netPay: 3000000 },
+  { id: 'EMP005', name: '최민준', department: '영업', position: '영업대표', hireDate: '2019-11-01', baseSalary: 6000000, netPay: 5000000 },
+  { id: 'EMP006', name: '정수빈', department: '디자인', position: 'UX 리서처', hireDate: '2022-08-15', baseSalary: 4000000, netPay: 3300000 },
 ];
 
 export function PayrollTable() {
     const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
     const [isPanelOpen, setIsPanelOpen] = useState(false);
+    const [searchTerm, setSearchTerm] = useState("");
+    const [departmentFilter, setDepartmentFilter] = useState<string[]>([]);
+    
+    const departments = useMemo(() => Array.from(new Set(allPayrollData.map(e => e.department))), []);
+
+    const payrollData = useMemo(() => {
+        return allPayrollData.filter(emp => {
+            const searchMatch = emp.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                                emp.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                                emp.position.toLowerCase().includes(searchTerm.toLowerCase());
+            const departmentMatch = departmentFilter.length === 0 || departmentFilter.includes(emp.department);
+            return searchMatch && departmentMatch;
+        });
+    }, [searchTerm, departmentFilter]);
 
     const handleRowClick = (employee: Employee) => {
         setSelectedEmployee(employee);
         setIsPanelOpen(true);
     };
 
+    const handleDepartmentFilterChange = (department: string) => {
+        setDepartmentFilter(prev =>
+            prev.includes(department) ? prev.filter(d => d !== department) : [...prev, department]
+        );
+    };
+
     return (
         <>
             <div className="flex flex-col md:flex-row gap-4 mb-4">
                 <Input placeholder="기간(월) 선택..." className="max-w-xs" type="month" defaultValue="2024-07" />
-                <Input placeholder="부서, 직급 검색..." className="max-w-xs" />
+                <Input 
+                    placeholder="사번, 성명, 직급 검색..." 
+                    className="max-w-xs" 
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                />
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <Button variant="outline" className="ml-auto">
-                            컬럼 표시 <ChevronDown className="ml-2 h-4 w-4" />
+                        <Button variant="outline" className="flex items-center gap-2">
+                            <Filter className="h-4 w-4" />
+                            부서 필터
+                            <ChevronDown className="h-4 w-4" />
                         </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                        <DropdownMenuCheckboxItem checked>사번</DropdownMenuCheckboxItem>
-                        <DropdownMenuCheckboxItem checked>성명</DropdownMenuCheckboxItem>
-                        <DropdownMenuCheckboxItem>총과세</DropdownMenuCheckboxItem>
-                        <DropdownMenuCheckboxItem>총비과세</DropdownMenuCheckboxItem>
+                    <DropdownMenuContent align="start">
+                        {departments.map(dept => (
+                            <DropdownMenuCheckboxItem
+                                key={dept}
+                                checked={departmentFilter.includes(dept)}
+                                onCheckedChange={() => handleDepartmentFilterChange(dept)}
+                            >
+                                {dept}
+                            </DropdownMenuCheckboxItem>
+                        ))}
                     </DropdownMenuContent>
                 </DropdownMenu>
-                <Button variant="outline" className="flex items-center gap-2">
-                    <Filter className="h-4 w-4" />
-                    필터
-                </Button>
             </div>
             <div className="border rounded-md">
                 <Table>
