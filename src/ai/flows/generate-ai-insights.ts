@@ -48,6 +48,8 @@ const prompt = ai.definePrompt({
   Format the output as a JSON object with an array of insight cards.
   Each insight card should have a title, a summary, and supporting data.
   The supporting data should be an array of strings.
+  
+  All output content (title, summary, supportingData) must be in Korean.
   `,
 });
 
